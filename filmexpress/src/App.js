@@ -3,7 +3,7 @@
 function App() {
   return (
     <div className="App">
-      FilmExpress
+      <h1 className="text-cyan-400">FilmExpress</h1>
     </div>
   );
 }
