@@ -1,77 +1,50 @@
 import React, { useEffect, useState } from "react";
 import ReactStars from "react-stars";
 import { useParams } from "react-router-dom";
-import { getDoc } from "firebase/firestore";
-
+import { db } from "../firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { ThreeCircles } from "react-loader-spinner";
+import Reviews from "./Reviews";
 
 const Detail = () => {
   const { id } = useParams();
-  const [data,setData]=useState({
-    title:"",
-    year:"",
-    image:"",
-    description:""
+  const [data, setData] = useState({
+    title: "",
+    year: "",
+    image: "",
+    description: "",
+    rating:0,
+    rated:0
   });
+
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     async function getData() {
-
-
-    }
+      const _doc = doc(db, "movies", id);
+      const _data = await getDoc(_doc);
+      setData(_data.data());
+      setLoading(false)    }
     getData();
   }, []);
 
   return (
     <div className="p-4 mt-4 w-full flex flex-col md:flex-row items-center md:items-start justify-center">
-      <img
-        className="h-72 md:sticky md:top-20"
-        src="https://m.media-amazon.com/images/M/MV5BOGE4NzU1YTAtNzA3Mi00ZTA2LTg2YmYtMDJmMThiMjlkYjg2XkEyXkFqcGdeQXVyNTgzMDMzMTg@._V1_.jpg"
-        alt=""
-      />
-      <div className="md:ml-4 ml-0 w-full md:w-1/2 text-gray-400">
-        <h1 className="text-3xl font-bold">
-          Thor<span className="text-xl">(2014)</span>
-        </h1>
-        <ReactStars value={4} size={20} half={true} edit={false} />
+     {loading?<div className="h-screen justify-center items-center flex "><ThreeCircles color="blue" height={45}/></div>:
+      <>
+        <img className="h-72 md:sticky md:top-20" src={data.image} alt="" />
+        <div className="md:ml-4 ml-0 w-full md:w-1/2 text-gray-400">
+          <h1 className="text-3xl font-bold">
+            {data.title}
+            <span className="text-xl">({data.year})</span>
+          </h1>
+          <ReactStars value={data.rating/data.rated} size={20} half={true} edit={false} />
 
-        <p className="mt-2">
-          {" "}
-          In 965 AD, Odin, king of Asgard, wages war against the Frost Giants of
-          Jotunheim and their leader Laufey, to prevent them from conquering the
-          Nine Realms, starting with Earth. The Asgardian warriors defeat the
-          Frost Giants in Tønsberg, Norway, and seize the source of their power,
-          the Casket of Ancient Winters. In 965 AD, Odin, king of Asgard, wages
-          war against the Frost Giants of Jotunheim and their leader Laufey, to
-          prevent them from conquering the Nine Realms, starting with Earth. The
-          Asgardian warriors defeat the Frost Giants in Tønsberg, Norway, and
-          seize the source of their power, the Casket of Ancient Winters.{" "}
-        </p>
-        
-        
-        <p className="mt-2">
-          {" "}
-          In 965 AD, Odin, king of Asgard, wages war against the Frost Giants of
-          Jotunheim and their leader Laufey, to prevent them from conquering the
-          Nine Realms, starting with Earth. The Asgardian warriors defeat the
-          Frost Giants in Tønsberg, Norway, and seize the source of their power,
-          the Casket of Ancient Winters. In 965 AD, Odin, king of Asgard, wages
-          war against the Frost Giants of Jotunheim and their leader Laufey, to
-          prevent them from conquering the Nine Realms, starting with Earth. The
-          Asgardian warriors defeat the Frost Giants in Tønsberg, Norway, and
-          seize the source of their power, the Casket of Ancient Winters.{" "}
-        </p>
-        <p className="mt-2">
-          {" "}
-          In 965 AD, Odin, king of Asgard, wages war against the Frost Giants of
-          Jotunheim and their leader Laufey, to prevent them from conquering the
-          Nine Realms, starting with Earth. The Asgardian warriors defeat the
-          Frost Giants in Tønsberg, Norway, and seize the source of their power,
-          the Casket of Ancient Winters. In 965 AD, Odin, king of Asgard, wages
-          war against the Frost Giants of Jotunheim and their leader Laufey, to
-          prevent them from conquering the Nine Realms, starting with Earth. The
-          Asgardian warriors defeat the Frost Giants in Tønsberg, Norway, and
-          seize the source of their power, the Casket of Ancient Winters.{" "}
-        </p>
-      </div>
+          <p className="mt-2">{data.description}</p>
+          <Reviews id={id} prevRating={data.rating} userRated={data.rated}/>
+        </div>
+      </>
+      }
     </div>
   );
 };

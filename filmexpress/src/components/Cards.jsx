@@ -3,6 +3,7 @@ import ReactStars from "react-stars";
 import { Bars } from "react-loader-spinner";
 import { getDocs } from "firebase/firestore";
 import { moviesRef } from "../firebase/firebase";
+import { Link } from "react-router-dom";
 
 const Cards = () => {
   const [data, setData] = useState([]);
@@ -21,14 +22,6 @@ const Cards = () => {
     getData();
   }, []);
 
-
-
-
-
-
-
-
-
   return (
     <div className="flex flex-wrap justify-between px-3 mt-3">
       {loading ? (
@@ -38,7 +31,7 @@ const Cards = () => {
       ) : (
         data.map((e, i) => {
           return (
-            <div
+            <Link to={`/detail/${e.id}`}> <div
               key={i}
               className="cardBgColor font-bold drop-shadow-lg p-2 hover:-translate-y-3 mb-6 transition-all duration-300"
             >
@@ -49,13 +42,13 @@ const Cards = () => {
               </h1>
               <h1 className="flex items-center">
                 <span className="text-gray-400 mr-1">Rating: </span>
-                <ReactStars value={5} size={20} half={true} edit={false} />
+                <ReactStars value={e.rating/e.rated} size={20} half={true} edit={false} />
               </h1>
               <h1>
                 <span className="text-gray-400">YEAR: </span>
                 {e.year}
               </h1>
-            </div>
+            </div></Link>
           );
         })
       )}
